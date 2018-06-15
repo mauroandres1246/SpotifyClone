@@ -125,29 +125,26 @@ function uploadImage(req,res){
     var file_name = 'Default';
     if (req.files) {
         var file_path = req.files.image.path;
-        var file_split = file_path.split('\\');
+		var file_path = req.files.image.path;
+        var file_split = file_path.split('/');
         var file_name = file_split[2];
-        var ext_split = file_path.split('\.');
+        var ext_split = file_path.split('.');
         var file_ext = ext_split[1];
 
-        if (file_ext=='jpg'  || file_ext=='png'  || file_ext=='gif') {
-            
-            
-            User.findByIdAndUpdate(userId,{image: file_name},(err,userUpdated)=>{
-                if (err) {
-                    res.status(500).send({message:'Error al actualizar el usuario'});
-                }else{
-                    if (!userUpdated) {
-                        res.status(404).send({message:'No se a podido actualizar el usuario'});
-                    } else {
-                        res.status(200).send({user: userUpdated});
-                    }
-                }
-            });
+        if(file_ext == 'png' || file_ext == 'jpg' || file_ext == 'gif'){
 
-        } else {
-            
-        }
+			User.findByIdAndUpdate(userId, {image: file_name}, (err, userUpdated) => {
+				if(!userUpdated){
+					res.status(404).send({message: 'No se ha podido actualizar el usuario'});
+				}else{
+					res.status(200).send({image: file_name, user: userUpdated});
+				}
+			});
+
+		}else{
+			res.status(200).send({message: 'Extensión del archivo no valida'});
+		}
+
 
     } else {
         res.status(200).send({message: 'no has subido ninguna imagen'});
